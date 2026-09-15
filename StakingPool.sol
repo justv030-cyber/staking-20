@@ -80,6 +80,7 @@ contract StakingPool {
     }
 
     function claimreward() public updateReward(msg.sender) {
+        require(users[msg.sender].amount > 0, "No active stake");
         uint256 Reward = users[msg.sender].reward;
 
         users[msg.sender].amount = 0;
