@@ -83,7 +83,7 @@ contract StakingPool {
         require(users[msg.sender].amount > 0, "No active stake");
         uint256 Reward = users[msg.sender].reward;
 
-        users[msg.sender].amount = 0;
+        users[msg.sender].reward = 0;
 
         stakingToken.transfer(msg.sender, Reward);
     }
