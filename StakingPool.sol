@@ -15,8 +15,8 @@ contract StakingPool {
 
     struct UserInfo {
         uint256 amount;
-        uint256 rewardDebt;
-        uint256 lastUpdate;
+        uint256 reward;
+        uint256 userRewardPerTokenPaid;
     }
 
     // mapping(address => uint256) public tokens;
@@ -51,5 +51,15 @@ contract StakingPool {
         stakingToken.transfer(msg.sender, _amount);
 
         totalSupply -= _amount;
+    }
+
+    function rewardPerToken() public view returns (uint256) {
+        if (totalSupply == 0) {
+            return rewardPerTokenStored;
+        }
+        return
+            rewardPerTokenStored +
+            ((block.timestamp - lastUpdateTime) * rewardRate * 1e18) /
+                totalSupply;
     }
 }
