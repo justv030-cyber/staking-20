@@ -25,11 +25,19 @@ contract StakingPool {
 
     mapping(address => UserInfo) public users;
 
+    modifier updateReward(address account) {
+        rewardPerTokenStored = rewardPerToken();
+        lastUpdateTime = block.timestamp;
+        users[account].reward = earned(account);
+        users[account].userRewardPerTokenPaid = rewardPerTokenStored;
+        _;
+    }
+
     constructor(address _tokenAddress) {
         stakingToken = IERC20(_tokenAddress);
     }
 
-    function stake(uint256 _amount) public {
+    function stake(uint256 _amount) public updateReward(msg.sender) {
         require(_amount > 0, "Please Enter Valid Amount");
 
         stakingToken.transferFrom(msg.sender, address(this), _amount);
@@ -39,7 +47,7 @@ contract StakingPool {
         totalSupply += _amount;
     }
 
-    function unstake(uint256 _amount) public {
+    function unstake(uint256 _amount) public updateReward(msg.sender) {
         require(users[msg.sender].amount > 0, "Please Enter Valid Amount");
         require(
             users[msg.sender].amount >= _amount,
@@ -69,5 +77,13 @@ contract StakingPool {
             1e18 +
             users[_acc].reward;
         return Reward;
+    }
+
+    function claimreward() public updateReward(msg.sender) {
+        uint256 Reward = users[msg.sender].reward;
+
+        users[msg.sender].amount = 0;
+
+        stakingToken.transfer(msg.sender, Reward);
     }
 }
