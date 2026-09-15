@@ -12,6 +12,7 @@ contract StakingPool {
     uint256 public rewardPerTokenStored;
     uint256 public lastUpdateTime;
     uint256 public rewardRate;
+    address public owner;
 
     struct UserInfo {
         uint256 amount;
@@ -33,8 +34,14 @@ contract StakingPool {
         _;
     }
 
+    modifier onlyOwner(address _tokenAddress) {
+        owner = _tokenAddress;
+        _;
+    }
+
     constructor(address _tokenAddress) {
         stakingToken = IERC20(_tokenAddress);
+        owner = _tokenAddress;
     }
 
     function stake(uint256 _amount) public updateReward(msg.sender) {
@@ -87,4 +94,6 @@ contract StakingPool {
 
         stakingToken.transfer(msg.sender, Reward);
     }
+
+    function
 }
