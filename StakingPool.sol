@@ -62,4 +62,12 @@ contract StakingPool {
             ((block.timestamp - lastUpdateTime) * rewardRate * 1e18) /
                 totalSupply;
     }
+
+    function earned(address _acc) public view returns (uint256) {
+        uint256 Reward = (users[_acc].amount *
+            (rewardPerToken() - users[_acc].userRewardPerTokenPaid)) /
+            1e18 /
+            users[_acc].reward;
+        return Reward;
+    }
 }
