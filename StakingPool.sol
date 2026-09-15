@@ -34,14 +34,14 @@ contract StakingPool {
         _;
     }
 
-    modifier onlyOwner(address _tokenAddress) {
-        owner = _tokenAddress;
+    modifier onlyOwner() {
+        require(owner == msg.sender, "Not Owner");
         _;
     }
 
     constructor(address _tokenAddress) {
         stakingToken = IERC20(_tokenAddress);
-        owner = _tokenAddress;
+        owner = msg.sender;
     }
 
     function stake(uint256 _amount) public updateReward(msg.sender) {
@@ -95,5 +95,9 @@ contract StakingPool {
         stakingToken.transfer(msg.sender, Reward);
     }
 
-    function
+    function setRewardRate(uint256 _rewardRate) public onlyOwner {
+        rewardPerTokenStored = rewardPerToken();
+        lastUpdateTime = block.timestamp;
+        rewardRate = _rewardRate;
+    }
 }
