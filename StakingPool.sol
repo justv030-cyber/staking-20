@@ -6,9 +6,17 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contr
 contract StakingPool {
     IERC20 public stakingToken;
 
-    mapping(address => uint256) public tokens;
+    struct UserInfo {
+        uint256 amount;
+        uint256 rewardDebt;
+        uint256 lastUpdate;
+    }
 
-    mapping(address => uint256) public stakingTime;
+    // mapping(address => uint256) public tokens;
+
+    // mapping(address => uint256) public stakingTime;
+
+    mapping(address => UserInfo) public users;
 
     constructor(address _tokenAddress) {
         stakingToken = IERC20(_tokenAddress);
@@ -19,16 +27,17 @@ contract StakingPool {
 
         stakingToken.transferFrom(msg.sender, address(this), _amount);
 
-        stakingTime[msg.sender] = block.timestamp;
-
-        tokens[msg.sender] += _amount;
+        users[msg.sender].amount += _amount;
     }
 
     function unstake(uint256 _amount) public {
-        require(_amount > 0, "Please Enter Valid Amount");
-        require(tokens[msg.sender] >= _amount, "Insufficient Balance");
+        require(users[msg.sender].amount > 0, "Please Enter Valid Amount");
+        require(
+            users[msg.sender].amount >= _amount,
+            "Please Enter Valid Amount"
+        );
 
-        tokens[msg.sender] -= _amount;
+        users[msg.sender].amount -= _amount;
 
         stakingToken.transfer(msg.sender, _amount);
     }
