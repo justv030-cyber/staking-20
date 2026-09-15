@@ -2,9 +2,16 @@
 pragma solidity ^0.8.34;
 
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/IERC20.sol";
+// import "Staking.sol";
 
 contract StakingPool {
     IERC20 public stakingToken;
+
+    uint256 public totalSupply;
+
+    uint256 public rewardPerTokenStored;
+    uint256 public lastUpdateTime;
+    uint256 public rewardRate;
 
     struct UserInfo {
         uint256 amount;
@@ -28,6 +35,8 @@ contract StakingPool {
         stakingToken.transferFrom(msg.sender, address(this), _amount);
 
         users[msg.sender].amount += _amount;
+
+        totalSupply += _amount;
     }
 
     function unstake(uint256 _amount) public {
@@ -40,5 +49,7 @@ contract StakingPool {
         users[msg.sender].amount -= _amount;
 
         stakingToken.transfer(msg.sender, _amount);
+
+        totalSupply -= _amount;
     }
 }

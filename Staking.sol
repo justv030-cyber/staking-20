@@ -6,10 +6,11 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract Staking is ERC20, Ownable {
-    constructor(address initialOwner)
-        ERC20("staking", "STK")
-        Ownable(initialOwner)
-    {}
+    constructor(
+        address initialOwner
+    ) ERC20("staking", "STK") Ownable(initialOwner) {}
+
+    uint256 public totalsupply;
 
     function mint(address to, uint256 amount) public onlyOwner {
         _mint(to, amount);
